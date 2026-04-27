@@ -5,12 +5,13 @@ from datetime import datetime
 
 class ResourceCreate(BaseModel):
     name: str
-    category: str   # Book / Device / Calculator / Lab Kit
+    category: str
     subject: str
-    condition: str  # New / Good / Used
-    type: str       # Donate / Lend / Share
+    condition: str
+    type: str
     description: Optional[str] = None
     image_url: Optional[str] = None
+    price: Optional[str] = None   # "0" or None = Free, "250" = ₹250
 
 
 class ResourceUpdate(BaseModel):
@@ -21,6 +22,7 @@ class ResourceUpdate(BaseModel):
     type: Optional[str] = None
     description: Optional[str] = None
     image_url: Optional[str] = None
+    price: Optional[str] = None
     is_available: Optional[bool] = None
 
 
@@ -34,6 +36,7 @@ class ResourceOut(BaseModel):
     type: str
     description: Optional[str]
     image_url: Optional[str]
+    price: Optional[str]
     is_available: bool
     created_at: datetime
 

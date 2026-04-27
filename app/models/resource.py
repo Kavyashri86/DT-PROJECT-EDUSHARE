@@ -17,6 +17,7 @@ class Resource(Base):
     type = Column(String(20), nullable=False)        # Donate / Lend / Share
     description = Column(Text, nullable=True)
     image_url = Column(String(255), nullable=True)
+    price = Column(String(20), nullable=True)   # None or "0" = Free, else amount as string
     is_available = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 

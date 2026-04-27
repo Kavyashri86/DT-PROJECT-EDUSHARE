@@ -39,6 +39,20 @@ def get_my_requests(
     return db.query(Request).filter(Request.requester_id == current_user.id).all()
 
 
+@router.get("/incoming", response_model=List[RequestOut])
+def get_incoming_requests(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """All requests made on resources owned by the current user."""
+    return (
+        db.query(Request)
+        .join(Resource, Request.resource_id == Resource.id)
+        .filter(Resource.user_id == current_user.id)
+        .all()
+    )
+
+
 @router.patch("/{request_id}", response_model=RequestOut)
 def update_request_status(
     request_id: str,
@@ -46,19 +60,24 @@ def update_request_status(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    if payload.status not in ("pending", "approved", "rejected"):
+    if payload.status not in ("pending", "approved", "rejected", "delivered"):
         raise HTTPException(status_code=400, detail="Invalid status value")
 
     req = db.query(Request).filter(Request.id == request_id).first()
     if not req:
         raise HTTPException(status_code=404, detail="Request not found")
 
-    # Only the resource owner can approve/reject
+    # Only the resource owner can change status
     resource = db.query(Resource).filter(Resource.id == req.resource_id).first()
     if resource.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
 
     req.status = payload.status
+
+    # Mark resource unavailable when delivered
+    if payload.status == "delivered":
+        resource.is_available = False
+
     db.commit()
     db.refresh(req)
     return req

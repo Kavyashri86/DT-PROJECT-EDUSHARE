@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 
 class RequestCreate(BaseModel):
@@ -7,7 +8,7 @@ class RequestCreate(BaseModel):
 
 
 class RequestStatusUpdate(BaseModel):
-    status: str  # pending / approved / rejected
+    status: str  # pending / approved / rejected / delivered
 
 
 class RequestOut(BaseModel):

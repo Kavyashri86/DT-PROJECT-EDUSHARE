@@ -20,5 +20,8 @@ env/
 *.DS_Store
 Thumbs.db
 
+# Uploaded images
+uploads/
+
 # Logs
 *.log
